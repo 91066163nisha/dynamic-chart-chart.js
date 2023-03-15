@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"
+      integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Chart.js example</title>
+    <style>
+      .container {
+        width: 900px;
+      }
+
+      #myselect {
+        width: 200px;
+        height: 40px;
+        background-color: rgb(166, 176, 149);
+        border-radius: 10px;
+        font-size: 20px;
+        padding: 0 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <select name="selectedVal" id="myselect">
+        <option value="2012">Select year</option>
+        <option value="2012">2012</option>
+        <option value="2013">2013</option>
+        <option value="2014">2014</option>
+        <option value="2015">2015</option>
+      </select>
+      <div>
+        <canvas id="myChart"></canvas>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      let finalDataArr2 = []
+      let finalDataArr1 = []
+      let finalDataArr0 = []
+      const developerData = [
+        {
+          2012: {
+            ROR_developer: {
+              percentage: "30%",
+              average_income: "$50000",
+              community_size: "1000"
+            },
+            javascript_developer: {
+              percentage: "10%",
+              average_income: "$40000",
+              community_size: "500"
+            },
+            java_developer: {
+              percentage: "40%",
+              average_income: "$70000",
+              community_size: "5000"
+            },
+            dotNet_developer: {
+              percentage: "20%",
+              average_income: "$30000",
+              community_size: "800"
+            },
+          }
+        },
+        {
+          2013: {
+            ROR_developer: {
+              percentage: "10%",
+              average_income: "$40000",
+              community_size: "1000"
+            },
+            javascript_developer: {
+              percentage: "20%",
+              average_income: "$40000",
+              community_size: "500"
+            },
+            java_developer: {
+              percentage: "50%",
+              average_income: "$70800",
+              community_size: "5000"
+            },
+            dotNet_developer: {
+              percentage: "20%",
+              average_income: "$30000",
+              community_size: "800"
+            },
+          }
+        },
+        {
+          2014: {
+            ROR_developer: {
+              percentage: "20%",
+              average_income: "$50040",
+              community_size: "1000"
+            },
+            javascript_developer: {
+              percentage: "30%",
+              average_income: "$41000",
+              community_size: "500"
+            },
+            java_developer: {
+              percentage: "30%",
+              average_income: "$80000",
+              community_size: "5000"
+            },
+            dotNet_developer: {
+              percentage: "20%",
+              average_income: "$30000",
+              community_size: "800"
+            },
+          }
+        },
+        {
+          2015: {
+            ROR_developer: {
+              percentage: "30%",
+              average_income: "$80000",
+              community_size: "1000"
+            },
+            javascript_developer: {
+              percentage: "40%",
+              average_income: "$70000",
+              community_size: "500"
+            },
+            java_developer: {
+              percentage: "30%",
+              average_income: "$70000",
+              community_size: "5000"
+            },
+            dotNet_developer: {
+              percentage: "10%",
+              average_income: "$30000",
+              community_size: "800"
+            },
+          }
+        },
+      ]
+
+      $(document).ready(function () {
+        developerData.forEach(element => {
+          const year = Object.keys(element).toString()
+          $("#myselect").change(function () {
+            var selectedYear = $(this).children("option:selected").val();
+            dataArr = []
+            finalDataArr = []
+            if (year === selectedYear) {
+              dataArr.push(...Object.values(element))
+            }
+            dataArr.forEach(elem => {
+              let finalData = Object.values(elem)
+              updateData(finalData)
+            })
+          });
+        });
+      });
+      const data = {
+        labels: ['ROR_developer', 'javascript_developer', 'java_developer', 'dotNet_developer'],
+        datasets: [{
+          label: 'percentage',
+          data: [0, 0, 0, 0],
+          borderWidth: 1
+        },
+        {
+          label: 'average_income',
+          data: [0, 0, 0, 0],
+          borderWidth: 1,
+          hidden: true
+        },
+        {
+          label: 'community_size',
+          data: [0, 0, 0, 0],
+          borderWidth: 1,
+          hidden: true
+        }]
+      }
+      const config = {
+        type: 'pie',
+        data,
+        options: {
+          responsive: true,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                beforeBody: function (tooltipItem) {
+                  switch (tooltipItem[0].label) {
+                    case "ROR_developer":
+                      return `average_income = ${data['datasets'][1]['data'][0]}\ncommunity_size = ${data['datasets'][2]['data'][0]}`
+                    case "javascript_developer":
+                      return `average_income = ${data['datasets'][1]['data'][1]}\ncommunity_size = ${data['datasets'][2]['data'][1]}`
+                    case "java_developer":
+                      return `average_income = ${data['datasets'][1]['data'][2]}\ncommunity_size = ${data['datasets'][2]['data'][2]}`
+                    case "dotNet_developer":
+                      return `average_income = ${data['datasets'][1]['data'][3]}\ncommunity_size = ${data['datasets'][2]['data'][3]}`
+                    default:
+                      break;
+                  }
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      };
+
+      function updateData(finalData) {
+        finalData.forEach(data => {
+          console.log(data, "data")
+          finalDataArr2.push(data.community_size)
+          finalDataArr1.push(data.average_income.substring(1))
+          finalDataArr0.push(data.percentage.slice(0, -1))
+        })
+        myChart.data.datasets[0].data = finalDataArr0;
+        myChart.data.datasets[1].data = finalDataArr1
+        myChart.data.datasets[2].data = finalDataArr2
+        console.log(finalDataArr0, "irtt++")
+        myChart.update();
+      }
+      var myChart = new Chart(document.getElementById('myChart'),
+        config
+      );
+    </script>
+  </body>
+
+</html>
